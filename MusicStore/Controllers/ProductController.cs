@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MusicStore.Dto;
+using MusicStore.IServices;
 using MusicStore.Models;
 using MusicStore.Servieses;
 
@@ -10,27 +11,32 @@ namespace MusicStore.Controllers
     [ApiController]
     public class ProductController : ControllerBase
     {
-        public readonly ProductService _ProductService = new();
+        private readonly IProductService _service;
+
+        public ProductController(IProductService service)
+        {
+            _service = service;
+        }
 
         //get
         [HttpGet]
         [Route("ProductOrderByTitle")]
         public IActionResult GetByCategory()
         {
-            return Ok(_ProductService.ProductOrderByTitle());
+            return Ok(_service.ProductOrderByTitle());
         }
 
         [HttpGet]
         [Route("ProductWithCategory")]
         public IActionResult ProductWithCategory()
         {
-            return Ok(_ProductService.ProductWithCategory());
+            return Ok(_service.ProductWithCategory());
         }
         //post
         [HttpPost]
         public IActionResult Post([FromBody] List<CreateProductDto> products)
         {
-            _ProductService.AddRange(products);
+            _service.AddRange(products);
             return Ok("success");
         }
 
@@ -39,7 +45,7 @@ namespace MusicStore.Controllers
         [Route("delete")]
         public IActionResult Delete(int id)
         {
-            return Ok(_ProductService.DeleteProduct(id));
+            return Ok(_service.DeleteProduct(id));
         }
 
         //delete

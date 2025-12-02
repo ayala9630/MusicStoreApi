@@ -2,12 +2,17 @@
 using Microsoft.EntityFrameworkCore;
 using MusicStore.Data;
 using MusicStore.Dto;
+using MusicStore.IRepositories;
 
 namespace MusicStore.Repositories
 {
-    public class OrderRepository
+    public class OrderRepository : IOrderRepository
     {
-        StoreContext context = StoreContextFactory.CreateContext();
+        private readonly StoreContext _context;
+        public OrderRepository(StoreContext context)
+        {
+            _context = context;
+        }
 
         //get
         public List<OrdersDto> OrederList()
@@ -15,7 +20,7 @@ namespace MusicStore.Repositories
             //return context.Order.Include(x => x.Products)
             //                    .Select(x => new { id = x.Id, user = x.User.Username, products = x.Products })
             //                    .ToList();
-            return context.Order.Include(x => x.Products)
+            return _context.Order.Include(x => x.Products)
                                 .Select(x => new OrdersDto { UserName = x.User.Username, Products = x.Products.ToList() })
                                 .ToList();
         }

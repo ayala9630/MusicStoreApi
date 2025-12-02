@@ -1,12 +1,17 @@
 ﻿using MusicStore.Dto;
+using MusicStore.IRepositories;
 using MusicStore.Repositories;
 
 namespace MusicStore.Servieses
 {
-    public class UserService
+    public class UserService : IUserService
     {
-        private readonly UserRepository _repository = new();
+        private readonly IUserRepository _repository;
 
+        public UserService(IUserRepository repository)
+        {
+            _repository = repository;
+        }
         //get
         public List<UserDto> GetUsers()
         {

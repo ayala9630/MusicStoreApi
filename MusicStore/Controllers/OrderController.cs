@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using MusicStore.IServices;
 using MusicStore.Servieses;
 
 namespace MusicStore.Controllers
@@ -7,12 +8,17 @@ namespace MusicStore.Controllers
     [ApiController]
     public class OrderController:ControllerBase
     {
-        private readonly OrderService _orderService = new();
+        private readonly IOrderService _service;
+
+        public OrderController(IOrderService service)
+        {
+            _service = service;
+        }
         //get
         [HttpGet]
         public IActionResult Get()
         {
-            return Ok(_orderService.OrderList()); 
+            return Ok(_service.OrderList()); 
         }
         //post
 

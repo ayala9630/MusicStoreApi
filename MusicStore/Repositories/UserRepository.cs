@@ -3,22 +3,27 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using MusicStore.Data;
 using MusicStore.Dto;
+using MusicStore.IRepositories;
 using MusicStore.Models;
 
 namespace MusicStore.Repositories
 {
-    public class UserRepository
+    public class UserRepository:IUserRepository
     {
-        StoreContext context = StoreContextFactory.CreateContext();
+        private readonly StoreContext _context;
+        public UserRepository(StoreContext context)
+        {
+            _context = context;
+        }
         //get
         public List<UserDto> GetUsers()
         {
-            return context.Users.Select(x => new UserDto() { Name = x.Name, Username = x.Username }).ToList();
+            return _context.Users.Select(x => new UserDto() { Name = x.Name, Username = x.Username }).ToList();
         }
         //post
         public int CreateUser(CreateUserDto user)
         {
-            using var transaction = context.Database.BeginTransaction();
+            using var transaction = _context.Database.BeginTransaction();
 
             try
             {
@@ -37,11 +42,11 @@ namespace MusicStore.Repositories
             };
 
 
-                context.Database.ExecuteSqlRaw("EXEC CreateUser @Name, @Username, @Password, @Id OUTPUT", parameters);
+                _context.Database.ExecuteSqlRaw("EXEC CreateUser @Name, @Username, @Password, @Id OUTPUT", parameters);
 
                 int userId = (int)outputParameter.Value;
 
-                context.Database.ExecuteSqlInterpolated($@"EXEC UpdateUser @id={userId}, @Password={user.Password + '!'}");
+                _context.Database.ExecuteSqlInterpolated($@"EXEC UpdateUser @id={userId}, @Password={user.Password + '!'}");
 
                 transaction.Commit();
                 return userId;

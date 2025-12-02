@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using MusicStore.IServices;
 using MusicStore.Repositories;
 using MusicStore.Servieses;
 
@@ -10,13 +11,18 @@ namespace MusicStore.Controllers
     public class CategoryController:ControllerBase
     {
 
-        public readonly CategoryService _categoryService = new();
+        private readonly ICategoryService _service;
+
+        public CategoryController(ICategoryService service)
+        {
+            _service = service;
+        }
         //get
         [HttpGet]
         [Route("ProductByCategory")]
         public IActionResult GetByCategory()
         {
-            return Ok(_categoryService.ProductByCategory());
+            return Ok(_service.ProductByCategory());
         }
         //post
 
